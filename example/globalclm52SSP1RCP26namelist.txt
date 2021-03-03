@@ -1,0 +1,25 @@
+regionfilename   /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/regions/global.txt
+outputdir        /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/surfacedata/clm52finalrawdata/globalclm52SSP1RCP26deg025_190805
+outputseries     mksrf_landuse_clm52_SSP1RCP26
+refyear          2005
+startyear        2016
+endyear          2100
+clmcurrentsurfdb 2005 2005 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2current_deg025.nc
+clmLUHforestdb   2005 2005 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2forest_deg025.nc
+clmLUHpasturedb  2005 2005 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2pasture_deg025.nc
+clmLUHotherdb    2005 2005 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2other_deg025.nc
+clmLUHc3anndb    1961 2015 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2c3ann_deg025.nc
+clmLUHc4anndb    1961 2015 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2c4ann_deg025.nc
+clmLUHc3perdb    1961 2015 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2c3per_deg025.nc
+clmLUHc4perdb    1961 2015 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2c4per_deg025.nc
+clmLUHc3nfxdb    1961 2015 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/CLM52_EARTHSTAT_GEOG_DEG025/CLM52_EarthStat_luh2c3nfx_deg025.nc
+refstatesdb       850 2015 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/lumipfinallcc/historicLUH2_181217/states.nc
+luhstatesdb      2015 2100 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/lumipfinallcc/SSP1_RCP26_181217/states.nc
+luhmanagementdb  2015 2100 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/lumipfinallcc/SSP1_RCP26_181217/management.nc
+luhtransitionsdb 2015 2100 /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/lumipfinallcc/SSP1_RCP26_181217/transitions.nc
+pftparamfile     /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/LUTs/clmothertypes.txt
+cftrawparamfile  /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/LUTs/clmcropraw.txt
+cftparamfile     /glade/p/cesm/sdwg_dev/thesis/data/cesm_tools/clm52landusedatatool/LUTs/clmcroptypes.txt
+flipLUHgrids     1
+redistributeWH   0
+includeOcean     1
