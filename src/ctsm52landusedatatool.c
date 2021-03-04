@@ -1,8 +1,8 @@
 /* Generates Global CTSM52 Surface Data from LUH2 format time series and MODIS and EarthStat current day reference data */
 /* Author Peter Lawrence - Terrestrial Sciences Section - National Center for Atmospheric Research */
 /* Email:  lawrence@ucar.edu */ 
-/* Web:    https://www.cgd.ucar.edu/staff/lawrence 
-/* GitHub: https://github.com/lawrencepj1 
+/* Web:    https://www.cgd.ucar.edu/staff/lawrence */
+/* GitHub: https://github.com/lawrencepj1 */
 /* Phone:  +1 303-4971727 (work) +1 303-9566932 (mobile) */
 
 #include <stdio.h>
