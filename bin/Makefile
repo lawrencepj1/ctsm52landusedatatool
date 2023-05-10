@@ -15,5 +15,3 @@ endif
 
 ctsm52landusedatatool: ../src/ctsm52landusedatatool.c
 	icc -o ctsm52landusedatatool ../src/ctsm52landusedatatool.c -lm -mcmodel=medium -lnetcdf
-
-#	cc -o ctsm52landusedatatool ../src/ctsm52landusedatatool.c -lm -mcmodel=medium -L$(LIB_NETCDF) -I$(INC_NETCDF) -lnetcdf

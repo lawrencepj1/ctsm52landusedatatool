@@ -61,8 +61,6 @@
 #define RANK_UNREPRESENTED_PFT_LULCC 3
 #define RANK_UNREPRESENTED_CFT_LULCC 3
 
-#define CTSMPCTThreshold 0.01
-
 long MAXOUTPIX = MAXCTSMPIX;
 long MAXOUTLIN = MAXCTSMLIN;
 long OUTLONOFFSET = 0;
@@ -76,72 +74,73 @@ long OUTDBLDATASIZE = sizeof(double) * MAXCTSMPIX * MAXCTSMLIN;
 
 /* Namelist Variables */
 
+char authorname[1024];
 char regionfilename[1024];
 char outputdir[1024];
 char outputseries[1024];
+char timestamp[1024];
 int refyear;
 int startyear;
 int endyear;
 int ctsmcurrentsurfstartyear;
 int ctsmcurrentsurfendyear;
-int ctsmcurrentsurfreadyear = -1;
+int ctsmcurrentsurfreadyear = -99999;
 char ctsmcurrentsurfdb[1024];
 int ctsmLUHforeststartyear;
 int ctsmLUHforestendyear;
-int ctsmLUHforestreadyear = -1;
+int ctsmLUHforestreadyear = -99999;
 char ctsmLUHforestdb[1024];
 int ctsmLUHpasturestartyear;
 int ctsmLUHpastureendyear;
-int ctsmLUHpasturereadyear = -1;
+int ctsmLUHpasturereadyear = -99999;
 char ctsmLUHpasturedb[1024];
 int ctsmLUHotherstartyear;
 int ctsmLUHotherendyear;
-int ctsmLUHotherreadyear = -1;
+int ctsmLUHotherreadyear = -99999;
 char ctsmLUHotherdb[1024];
 int ctsmLUHc3annstartyear;
 int ctsmLUHc3annendyear;
-int ctsmLUHc3annreadyear = -1;
+int ctsmLUHc3annreadyear = -99999;
 char ctsmLUHc3anndb[1024];
 int ctsmLUHc4annstartyear;
 int ctsmLUHc4annendyear;
-int ctsmLUHc4annreadyear = -1;
+int ctsmLUHc4annreadyear = -99999;
 char ctsmLUHc4anndb[1024];
 int ctsmLUHc3perstartyear;
 int ctsmLUHc3perendyear;
-int ctsmLUHc3perreadyear = -1;
+int ctsmLUHc3perreadyear = -99999;
 char ctsmLUHc3perdb[1024];
 int ctsmLUHc4perstartyear;
 int ctsmLUHc4perendyear;
-int ctsmLUHc4perreadyear = -1;
+int ctsmLUHc4perreadyear = -99999;
 char ctsmLUHc4perdb[1024];
 int ctsmLUHc3nfxstartyear;
 int ctsmLUHc3nfxendyear;
-int ctsmLUHc3nfxreadyear = -1;
+int ctsmLUHc3nfxreadyear = -99999;
 char ctsmLUHc3nfxdb[1024];
 int refstatesstartyear;
 int refstatesendyear;
-int refstatesreadyear = -1;
+int refstatesreadyear = -99999;
 char refstatesdb[1024];
 int luhstatesstartyear;
 int luhstatesendyear;
-int luhcurrentstatesreadyear = -1;
-int luhprevstatesreadyear = -1;
+int luhcurrentstatesreadyear = -99999;
+int luhprevstatesreadyear = -99999;
 char luhstatesdb[1024];
 int luhmanagementstartyear;
 int luhmanagementendyear;
-int luhwoodharvestreadyear = -1;
-int luhcropmanagementreadyear = -1;
+int luhwoodharvestreadyear = -99999;
+int luhcropmanagementreadyear = -99999;
 char luhmanagementdb[1024];
 int luhtransitionsstartyear;
 int luhtransitionsendyear;
-int luhsecdfunrepreadyear = -1;
-int luhsecdnunrepreadyear = -1;
+int luhsecdfunrepreadyear = -99999;
+int luhsecdnunrepreadyear = -99999;
 char luhtransitionsdb[1024];
 char pftparamfile[1024];
 char cftrawparamfile[1024];
 char cftparamfile[1024];
 int flipLUHgrids;
-int redistributeWH;
 int includeOcean;
 
 char PFTluhtype[MAXPFT][256];
@@ -150,8 +149,14 @@ char CFTluhtype[MAXCFT][256];
 
 float *tempGrid;
 float *tempflipGrid;
+float *tempextrapGrid;
 float *tempoutGrid;
-float *translossGrid;
+float *secdfCROPINGrid;
+float *secdfOTHERINGrid;
+float *secdfOTHEROUTGrid;
+float *secdnCROPINGrid;
+float *secdnOTHERINGrid;
+float *secdnOTHEROUTGrid;
 
 int *innatpft;
 int *incft;
@@ -205,6 +210,7 @@ float *inCURRSECDFGrid;
 float *inCURRSECDNGrid;
 float *inCURRPASTRGrid;
 float *inCURRRANGEGrid;
+float *inCURRCropGrid;
 float *inCURRC3ANNGrid;
 float *inCURRC4ANNGrid;
 float *inCURRC3PERGrid;
@@ -212,15 +218,15 @@ float *inCURRC4PERGrid;
 float *inCURRC3NFXGrid;
 float *inCURRURBANGrid;
 
-float *inPREVSECDFGrid;
-float *inPREVSECDNGrid;
-float *inPREVPASTRGrid;
-float *inPREVRANGEGrid;
-float *inPREVC3ANNGrid;
-float *inPREVC4ANNGrid;
-float *inPREVC3PERGrid;
-float *inPREVC4PERGrid;
-float *inPREVC3NFXGrid;
+float *inPREVDELTASECDFGrid;
+float *inPREVDELTASECDNGrid;
+float *inPREVDELTAPASTRGrid;
+float *inPREVDELTARANGEGrid;
+float *inPREVDELTAC3ANNGrid;
+float *inPREVDELTAC4ANNGrid;
+float *inPREVDELTAC3PERGrid;
+float *inPREVDELTAC4PERGrid;
+float *inPREVDELTAC3NFXGrid;
 
 float *inHARVESTVH1Grid;
 float *inHARVESTVH2Grid;
@@ -259,6 +265,7 @@ float *inIRRIGC3NFXGrid;
 float *inBASEFORESTTOTALGrid;
 float *inBASENONFORESTTOTALGrid;
 float *inBASECROPTOTALGrid;
+float *inBASEURBANTOTALGrid;
 float *inBASEMISSINGGrid;
 float *inBASEOTHERGrid;
 float *inBASENATVEGGrid;
@@ -267,6 +274,7 @@ float *inCURRFORESTTOTALGrid;
 float *inCURRNONFORESTTOTALGrid;
 float *inCURRCROPTOTALGrid;
 float *inPREVCROPTOTALGrid;
+float *inCURRURBANTOTALGrid;
 float *inCURRMISSINGGrid;
 float *inCURROTHERGrid;
 float *inCURRNATVEGGrid;
@@ -274,6 +282,8 @@ float *inCURRNATVEGGrid;
 float *inUNREPFORESTGrid;
 float *inUNREPOTHERGrid;
 
+float *outLANDMASKGrid;
+float *outPCTURBANGrid;
 float *outPCTNATVEGGrid;
 float *outPCTCROPGrid;
 float *outPCTPFTGrid[MAXPFT];
@@ -313,8 +323,8 @@ double *outAREAdblGrid;
 double *outPCTGLACIERdblGrid;
 double *outPCTLAKEdblGrid;
 double *outPCTWETLANDdblGrid;
-double *outPCTURBANdblGrid;
 
+double *outPCTURBANdblGrid;
 double *outPCTNATVEGdblGrid;
 double *outPCTCROPdblGrid;
 double *outPCTPFTdblGrid[MAXPFT];
@@ -412,14 +422,32 @@ int UNREPRESENTED_CFT_LULCC_dims[RANK_UNREPRESENTED_CFT_LULCC];
 int readnamelist(char *namelist) {
 
   FILE *namelistfile;
+  char templine[1024];
   char fieldname[256];
+  char *token;
+  int tokencount;
 
   printf("Reading Namelist: %s\n",namelist);
   namelistfile = fopen(namelist,"r");
   
+  sprintf(authorname,"");
+  fgets(templine,sizeof(templine),namelistfile);
+  token = strtok(templine," ");
+  tokencount = 1;
+  while( token != NULL ) {
+     if (tokencount == 2) {
+         sprintf(authorname,"%s",token);
+     }
+     if (tokencount > 2 && strcmp(token,"\n") != 0) {
+        sprintf(authorname,"%s %s",authorname,token);
+     }
+     token = strtok(NULL," ");
+     tokencount++;
+  }
   fscanf(namelistfile,"%s %s",fieldname,regionfilename);
   fscanf(namelistfile,"%s %s",fieldname,outputdir);
   fscanf(namelistfile,"%s %s",fieldname,outputseries);
+  fscanf(namelistfile,"%s %s",fieldname,timestamp);
   fscanf(namelistfile,"%s %d",fieldname,&refyear);
   fscanf(namelistfile,"%s %d",fieldname,&startyear);
   fscanf(namelistfile,"%s %d",fieldname,&endyear);
@@ -440,7 +468,6 @@ int readnamelist(char *namelist) {
   fscanf(namelistfile,"%s %s",fieldname,cftrawparamfile);
   fscanf(namelistfile,"%s %s",fieldname,cftparamfile);  
   fscanf(namelistfile,"%s %d",fieldname,&flipLUHgrids);
-  fscanf(namelistfile,"%s %d",fieldname,&redistributeWH);
   fscanf(namelistfile,"%s %d",fieldname,&includeOcean);
 
   return 0;
@@ -488,7 +515,13 @@ int createallgrids() {
   tempGrid = (float *) malloc(OUTDATASIZE);
   tempoutGrid = (float *) malloc(OUTDATASIZE);
   tempflipGrid = (float *) malloc(OUTDATASIZE);
-  translossGrid = (float *) malloc(OUTDATASIZE);
+  tempextrapGrid = (float *) malloc(OUTDATASIZE);
+  secdfCROPINGrid = (float *) malloc(OUTDATASIZE);
+  secdfOTHERINGrid = (float *) malloc(OUTDATASIZE);
+  secdfOTHEROUTGrid = (float *) malloc(OUTDATASIZE);
+  secdnCROPINGrid = (float *) malloc(OUTDATASIZE);
+  secdnOTHERINGrid = (float *) malloc(OUTDATASIZE);
+  secdnOTHEROUTGrid = (float *) malloc(OUTDATASIZE);
 
   innatpft = (int *) malloc(MAXPFT * sizeof(int));
   incft = (int *) malloc(MAXCFT * sizeof(int));
@@ -548,6 +581,7 @@ int createallgrids() {
   inCURRSECDNGrid = (float *) malloc(OUTDATASIZE);
   inCURRPASTRGrid = (float *) malloc(OUTDATASIZE);
   inCURRRANGEGrid = (float *) malloc(OUTDATASIZE);
+  inCURRCropGrid = (float *) malloc(OUTDATASIZE);
   inCURRC3ANNGrid = (float *) malloc(OUTDATASIZE);
   inCURRC4ANNGrid = (float *) malloc(OUTDATASIZE);
   inCURRC3PERGrid = (float *) malloc(OUTDATASIZE);
@@ -555,15 +589,15 @@ int createallgrids() {
   inCURRC3NFXGrid = (float *) malloc(OUTDATASIZE);
   inCURRURBANGrid = (float *) malloc(OUTDATASIZE);
 
-  inPREVSECDFGrid = (float *) malloc(OUTDATASIZE);
-  inPREVSECDNGrid = (float *) malloc(OUTDATASIZE);
-  inPREVPASTRGrid = (float *) malloc(OUTDATASIZE);
-  inPREVRANGEGrid = (float *) malloc(OUTDATASIZE);
-  inPREVC3ANNGrid = (float *) malloc(OUTDATASIZE);
-  inPREVC4ANNGrid = (float *) malloc(OUTDATASIZE);
-  inPREVC3PERGrid = (float *) malloc(OUTDATASIZE);
-  inPREVC4PERGrid = (float *) malloc(OUTDATASIZE);
-  inPREVC3NFXGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTASECDFGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTASECDNGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTAPASTRGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTARANGEGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTAC3ANNGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTAC4ANNGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTAC3PERGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTAC4PERGrid = (float *) malloc(OUTDATASIZE);
+  inPREVDELTAC3NFXGrid = (float *) malloc(OUTDATASIZE);
 
   inHARVESTVH1Grid = (float *) malloc(OUTDATASIZE);
   inHARVESTVH2Grid = (float *) malloc(OUTDATASIZE);
@@ -602,6 +636,7 @@ int createallgrids() {
   inBASEFORESTTOTALGrid = (float *) malloc(OUTDATASIZE);
   inBASENONFORESTTOTALGrid = (float *) malloc(OUTDATASIZE);
   inBASECROPTOTALGrid = (float *) malloc(OUTDATASIZE);
+  inBASEURBANTOTALGrid = (float *) malloc(OUTDATASIZE);
   inBASEMISSINGGrid = (float *) malloc(OUTDATASIZE);
   inBASEOTHERGrid = (float *) malloc(OUTDATASIZE);
   inBASENATVEGGrid = (float *) malloc(OUTDATASIZE);
@@ -610,6 +645,7 @@ int createallgrids() {
   inCURRNONFORESTTOTALGrid = (float *) malloc(OUTDATASIZE);
   inCURRCROPTOTALGrid = (float *) malloc(OUTDATASIZE);
   inPREVCROPTOTALGrid = (float *) malloc(OUTDATASIZE);
+  inCURRURBANTOTALGrid = (float *) malloc(OUTDATASIZE);
   inCURRMISSINGGrid = (float *) malloc(OUTDATASIZE);
   inCURROTHERGrid = (float *) malloc(OUTDATASIZE);
   inCURRNATVEGGrid = (float *) malloc(OUTDATASIZE);
@@ -617,6 +653,8 @@ int createallgrids() {
   inUNREPFORESTGrid = (float *) malloc(OUTDATASIZE);
   inUNREPOTHERGrid = (float *) malloc(OUTDATASIZE);
 
+  outLANDMASKGrid = (float *) malloc(OUTDATASIZE);
+  outPCTURBANGrid = (float *) malloc(OUTDATASIZE);
   outPCTNATVEGGrid = (float *) malloc(OUTDATASIZE);
   outPCTCROPGrid = (float *) malloc(OUTDATASIZE);
   
@@ -669,8 +707,8 @@ int createallgrids() {
   outPCTGLACIERdblGrid = (double *) malloc(OUTDBLDATASIZE);
   outPCTLAKEdblGrid = (double *) malloc(OUTDBLDATASIZE);
   outPCTWETLANDdblGrid = (double *) malloc(OUTDBLDATASIZE);
-  outPCTURBANdblGrid = (double *) malloc(OUTDBLDATASIZE);
 
+  outPCTURBANdblGrid = (double *) malloc(OUTDBLDATASIZE);
   outPCTNATVEGdblGrid = (double *) malloc(OUTDBLDATASIZE);
   outPCTCROPdblGrid = (double *) malloc(OUTDBLDATASIZE);
   
@@ -771,6 +809,8 @@ int initializeGrids() {
   
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          outLANDMASKGrid[MAXOUTPIX * MAXOUTLIN] = 0.0;
+          outPCTURBANGrid[MAXOUTPIX * MAXOUTLIN] = 0.0;
           outPCTNATVEGGrid[MAXOUTPIX * MAXOUTLIN] = 0.0;
           outPCTCROPGrid[MAXOUTPIX * MAXOUTLIN] = 0.0;
           for (pftid = 0; pftid < MAXPFT; pftid++) {
@@ -840,7 +880,7 @@ createncoutputfile(char *netcdffilename) {
     printf("Creating NetCDF File: %s\n",netcdffilename); 
 
     /* enter define mode */
-    stat = nc_create(netcdffilename, NC_CLOBBER|NC_NETCDF4|NC_CLASSIC_MODEL, &ncid);
+    stat = nc_create(netcdffilename, NC_CLOBBER|NC_CDF5, &ncid);
     check_err(stat,__LINE__,__FILE__);
 
     /* define dimensions */
@@ -1003,20 +1043,85 @@ createncoutputfile(char *netcdffilename) {
     /* assign global attributes */
 
     {
-    stat = nc_put_att_text(ncid, NC_GLOBAL, "source", 20, "Peter Lawrence, NCAR");
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "Conventions", 8, "NCAR-CSM");
     check_err(stat,__LINE__,__FILE__);
     }
 
     {
-    stat = nc_put_att_text(ncid, NC_GLOBAL, "creation_date", 28, "Tue Jun 13 16:42:45 MDT 2017");
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "Author", strlen(authorname), authorname);
     check_err(stat,__LINE__,__FILE__);
     }
 
     {
-    stat = nc_put_att_text(ncid, NC_GLOBAL, "title", 18, "mksrf_file.nc");
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "History_Log", strlen(timestamp), timestamp);
     check_err(stat,__LINE__,__FILE__);
     }
-
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "Region", strlen(regionfilename), regionfilename);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMCurrentDB", strlen(ctsmcurrentsurfdb), ctsmcurrentsurfdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMForestDB", strlen(ctsmLUHforestdb), ctsmLUHforestdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMPastureDB", strlen(ctsmLUHpasturedb), ctsmLUHpasturedb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMOtherDB", strlen(ctsmLUHotherdb), ctsmLUHotherdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMC3AnnDB", strlen(ctsmLUHc3anndb), ctsmLUHc3anndb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMC4AnnDB", strlen(ctsmLUHc4anndb), ctsmLUHc4anndb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMC3PerDB", strlen(ctsmLUHc3perdb), ctsmLUHc3perdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMC4PerDB", strlen(ctsmLUHc4perdb), ctsmLUHc4perdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "CTSMC3NfxDB", strlen(ctsmLUHc3nfxdb), ctsmLUHc3nfxdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "LUH2StatesDB",strlen(luhstatesdb),luhstatesdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "LUH2ManagementDB",strlen(luhmanagementdb),luhmanagementdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
+    {
+    stat = nc_put_att_text(ncid, NC_GLOBAL, "LUH2TransitionsDB",strlen(luhtransitionsdb),luhtransitionsdb);
+    check_err(stat,__LINE__,__FILE__);
+    }
+    
 
     /* assign per-variable attributes */
 
@@ -2233,9 +2338,10 @@ int readLUHcurrstateGrids(int currentyear) {
   
 }
 
-int readLUHprevstateGrids(int prevyear) {
+int readLUHprevdeltastateGrids(int prevyear) {
 
-  int pftid, cftid, yearindex;
+  int pftid, cftid, curryear, yearindex1, yearindex2;
+  long ctsmlin, ctsmpix;
   
   if (prevyear == luhprevstatesreadyear) {
       return 0;
@@ -2250,31 +2356,124 @@ int readLUHprevstateGrids(int prevyear) {
   }
   
   if (prevyear <= luhstatesstartyear) {
-      yearindex = 0;
+      yearindex1 = 0;
       luhprevstatesreadyear = luhstatesstartyear;
   }
   else {
       if (prevyear >= luhstatesendyear) {
-          yearindex = luhstatesendyear - luhstatesstartyear;
+          yearindex1 = luhstatesendyear - luhstatesstartyear - 1;
 	  luhprevstatesreadyear = luhstatesendyear;
       }
       else {
-          yearindex = prevyear - luhstatesstartyear;
+          yearindex1 = prevyear - luhstatesstartyear;
 	  luhprevstatesreadyear = prevyear;
       }
   }
   
+  curryear = prevyear + 1;
+  if (curryear < luhstatesstartyear) {
+      yearindex2 = 0;
+  }
+  else {
+      if (curryear >= luhstatesendyear) {
+          yearindex2 = luhstatesendyear - luhstatesstartyear;
+      }
+      else {
+          yearindex2 = yearindex1 + 1;
+      }
+  }
+    
   openncinputfile(luhstatesdb); 
 
-  readnc3dfield("secdf",yearindex,inPREVSECDFGrid,flipLUHgrids);
-  readnc3dfield("secdn",yearindex,inPREVSECDNGrid,flipLUHgrids);
-  readnc3dfield("pastr",yearindex,inPREVPASTRGrid,flipLUHgrids);
-  readnc3dfield("range",yearindex,inPREVRANGEGrid,flipLUHgrids);
-  readnc3dfield("c3ann",yearindex,inPREVC3ANNGrid,flipLUHgrids);
-  readnc3dfield("c4ann",yearindex,inPREVC4ANNGrid,flipLUHgrids);
-  readnc3dfield("c3per",yearindex,inPREVC3PERGrid,flipLUHgrids);
-  readnc3dfield("c4per",yearindex,inPREVC4PERGrid,flipLUHgrids);
-  readnc3dfield("c3nfx",yearindex,inPREVC3NFXGrid,flipLUHgrids);
+  readnc3dfield("secdf",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("secdf",yearindex2,inPREVDELTASECDFGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTASECDFGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTASECDFGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("secdn",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("secdn",yearindex2,inPREVDELTASECDNGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTASECDNGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTASECDNGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("pastr",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("pastr",yearindex2,inPREVDELTAPASTRGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTAPASTRGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTAPASTRGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("range",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("range",yearindex2,inPREVDELTARANGEGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTARANGEGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTARANGEGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("c3ann",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("c3ann",yearindex2,inPREVDELTAC3ANNGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTAC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTAC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("c4ann",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("c4ann",yearindex2,inPREVDELTAC4ANNGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTAC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTAC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("c3per",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("c3per",yearindex2,inPREVDELTAC3PERGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTAC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTAC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("c4per",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("c4per",yearindex2,inPREVDELTAC4PERGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTAC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTAC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("c3nfx",yearindex1,tempGrid,flipLUHgrids);
+  readnc3dfield("c3nfx",yearindex2,inPREVDELTAC3NFXGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              inPREVDELTAC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVDELTAC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix] - tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
   
   closencfile();
 
@@ -2338,7 +2537,8 @@ int readUNREPSECDFGrids(int prevyear) {
 
   int yearindex;
   long ctsmlin, ctsmpix;
-  float totaltransloss, netchange;
+  float cropstatechange, secdfstatechange, secdfotherchange, secdfresidualchange; 
+  float secdfcropinval, secdfotherinval, secdfotheroutval, latval;
   float unreploss;
   
   if (prevyear == luhsecdfunrepreadyear) {
@@ -2369,51 +2569,111 @@ int readUNREPSECDFGrids(int prevyear) {
   }
   
   openncinputfile(luhtransitionsdb); 
-  
-  readnc3dfield("secdf_to_c3ann",yearindex,tempGrid,flipLUHgrids);
+
+  readnc3dfield("c3ann_to_secdf",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
 	  else {
-	      translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+	      secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
 	  }
       }
   }
 
-  readnc3dfield("secdf_to_c4ann",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c4ann_to_secdf",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
       }
   }
 
-  readnc3dfield("secdf_to_c3per",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c3per_to_secdf",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
       }
   }
 
-  readnc3dfield("secdf_to_c4per",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c4per_to_secdf",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
       }
   }
 
-  readnc3dfield("secdf_to_c3nfx",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c3nfx_to_secdf",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("primf_harv",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+	  else {
+              secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+	  }
+      }
+  }
+
+  readnc3dfield("secdn_to_secdf",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("pastr_to_secdf",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("range_to_secdf",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("urban_to_secdf",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("secdf_to_secdn",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+	  else {
+              secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
 	  }
       }
   }
@@ -2422,26 +2682,59 @@ int readUNREPSECDFGrids(int prevyear) {
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
       }
   }
 
+  readnc3dfield("secdf_to_range",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
-          totaltransloss = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-	  netchange = inCURRSECDFGrid[ctsmlin * MAXOUTPIX + ctsmpix] - inPREVSECDFGrid[ctsmlin * MAXOUTPIX + ctsmpix] - inHARVESTVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	  if (netchange <= 0.0) {
-	      if (totaltransloss > -netchange) {
-                  unreploss = totaltransloss + netchange;
-	      }
-	      else {
-	          unreploss = 0.0;
-              }
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
-          else {
-              unreploss = totaltransloss;
-          }
+      }
+  }
+
+  readnc3dfield("secdf_to_urban",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+	  cropstatechange = inPREVDELTAC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  cropstatechange += inPREVDELTAC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  cropstatechange += inPREVDELTAC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  cropstatechange += inPREVDELTAC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  cropstatechange += inPREVDELTAC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  if (cropstatechange > 0.0) {
+	      cropstatechange = 0.0;
+	  }
+          secdfstatechange = inPREVDELTASECDFGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+          secdfcropinval = secdfCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  secdfotherinval = secdfOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  secdfotheroutval = secdfOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  secdfotherchange = secdfotherinval - secdfotheroutval;
+	  secdfresidualchange = secdfotherchange - secdfstatechange;
+	  if (secdfresidualchange > 0.0) {
+	      secdfresidualchange = 0.0;
+	  }
+	  unreploss = secdfcropinval + secdfresidualchange + cropstatechange;
+	  if (unreploss < 0.0) {
+	      unreploss = 0.0;
+	  }
+
+          latval = inLATIXY[ctsmlin * MAXOUTPIX + ctsmpix];
+	  if (latval > 30.0 || latval < -30.0) {
+	      unreploss = 0.0;
+	  }
+
           inUNREPSECDFGrid[ctsmlin * MAXOUTPIX + ctsmpix] = unreploss;
       }
   }
@@ -2457,7 +2750,8 @@ int readUNREPSECDNGrids(int prevyear) {
 
   int yearindex;
   long ctsmlin, ctsmpix;
-  float totaltransloss, netchange;
+  float cropstatechange, secdnstatechange, secdnotherchange, secdnresidualchange; 
+  float secdncropinval, secdnotherinval, secdnotheroutval, latval;
   float unreploss;
   
   if (prevyear == luhsecdnunrepreadyear) {
@@ -2489,50 +2783,110 @@ int readUNREPSECDNGrids(int prevyear) {
   
   openncinputfile(luhtransitionsdb); 
   
-  readnc3dfield("secdn_to_c3ann",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c3ann_to_secdn",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
 	  else {
-	      translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+	      secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
 	  }
       }
   }
 
-  readnc3dfield("secdn_to_c4ann",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c4ann_to_secdn",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
       }
   }
 
-  readnc3dfield("secdn_to_c3per",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c3per_to_secdn",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
       }
   }
 
-  readnc3dfield("secdn_to_c4per",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c4per_to_secdn",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
       }
   }
 
-  readnc3dfield("secdn_to_c3nfx",yearindex,tempGrid,flipLUHgrids);
+  readnc3dfield("c3nfx_to_secdn",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("primn_harv",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+	  else {
+              secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+	  }
+      }
+  }
+
+  readnc3dfield("secdf_to_secdn",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("pastr_to_secdn",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("range_to_secdn",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("urban_to_secdn",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+  readnc3dfield("secdn_to_secdf",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+	  else {
+              secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
 	  }
       }
   }
@@ -2541,26 +2895,59 @@ int readUNREPSECDNGrids(int prevyear) {
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
-              translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
       }
   }
 
+  readnc3dfield("secdn_to_range",yearindex,tempGrid,flipLUHgrids);
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
-          totaltransloss = translossGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-	  netchange = inCURRSECDNGrid[ctsmlin * MAXOUTPIX + ctsmpix] - inPREVSECDNGrid[ctsmlin * MAXOUTPIX + ctsmpix] - inHARVESTVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	  if (netchange <= 0.0) {
-	      if (totaltransloss > -netchange) {
-                  unreploss = totaltransloss + netchange;
-	      }
-	      else {
-	          unreploss = 0.0;
-              }
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  }
-          else {
-              unreploss = totaltransloss;
-          }
+      }
+  }
+
+  readnc3dfield("secdn_to_urban",yearindex,tempGrid,flipLUHgrids);
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (tempGrid[ctsmlin * MAXOUTPIX + ctsmpix] <= 1.0) {
+              secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] = secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix] + tempGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  }
+      }
+  }
+
+
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+	  cropstatechange = inPREVDELTAC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  cropstatechange += inPREVDELTAC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  cropstatechange += inPREVDELTAC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  cropstatechange += inPREVDELTAC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  cropstatechange += inPREVDELTAC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  if (cropstatechange > 0.0) {
+	      cropstatechange = 0.0;
+	  }
+          secdnstatechange = inPREVDELTASECDNGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+          secdncropinval = secdnCROPINGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  secdnotherinval = secdnOTHERINGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  secdnotheroutval = secdnOTHEROUTGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  secdnotherchange = secdnotherinval - secdnotheroutval;
+	  secdnresidualchange = secdnotherchange - secdnstatechange;
+	  if (secdnresidualchange > 0.0) {
+	      secdnresidualchange = 0.0;
+	  }
+	  unreploss = secdncropinval + secdnresidualchange + cropstatechange;
+	  if (unreploss < 0.0) {
+	      unreploss = 0.0;
+	  }
+
+          latval = inLATIXY[ctsmlin * MAXOUTPIX + ctsmpix];
+	  if (latval > 30.0 || latval < -30.0) {
+	      unreploss = 0.0;
+	  }
+
           inUNREPSECDNGrid[ctsmlin * MAXOUTPIX + ctsmpix] = unreploss;
       }
   }
@@ -2606,22 +2993,139 @@ int readLUHcropmanagementGrids(int currentyear) {
   
   openncinputfile(luhmanagementdb); 
   
-  readnc3dfield("fertl_c3ann",yearindex,inFERTC3ANNGrid,flipLUHgrids);
-  readnc3dfield("fertl_c4ann",yearindex,inFERTC4ANNGrid,flipLUHgrids);
-  readnc3dfield("fertl_c3per",yearindex,inFERTC3PERGrid,flipLUHgrids);
-  readnc3dfield("fertl_c4per",yearindex,inFERTC4PERGrid,flipLUHgrids);
-  readnc3dfield("fertl_c3nfx",yearindex,inFERTC3NFXGrid,flipLUHgrids);
   readnc3dfield("irrig_c3ann",yearindex,inIRRIGC3ANNGrid,flipLUHgrids);
   readnc3dfield("irrig_c4ann",yearindex,inIRRIGC4ANNGrid,flipLUHgrids);
   readnc3dfield("irrig_c3per",yearindex,inIRRIGC3PERGrid,flipLUHgrids);
   readnc3dfield("irrig_c4per",yearindex,inIRRIGC4PERGrid,flipLUHgrids);
   readnc3dfield("irrig_c3nfx",yearindex,inIRRIGC3NFXGrid,flipLUHgrids);
 
+  readnc3dfield("fertl_c3ann",yearindex,inFERTC3ANNGrid,flipLUHgrids);
+  readnc3dfield("fertl_c4ann",yearindex,inFERTC4ANNGrid,flipLUHgrids);
+  readnc3dfield("fertl_c3per",yearindex,inFERTC3PERGrid,flipLUHgrids);
+  readnc3dfield("fertl_c4per",yearindex,inFERTC4PERGrid,flipLUHgrids);
+  readnc3dfield("fertl_c3nfx",yearindex,inFERTC3NFXGrid,flipLUHgrids);
+
   closencfile();
+
+  return 0;
+  
+}
+
+
+int extrapindvidualfertGrid(float *cropgrid, float *fertgrid) {
+
+  long ctsmlin, ctsmpix;
+  long searchlin, searchpix;
+  long searchboxinside, searchboxoutside;
+  float allcropfraction, cropfraction, searchcrop, searchfert, searchcropsum, searchfertsum;
+  int searchlinokay, searchpixokay;
+  
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+
+          tempextrapGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+	  
+	  allcropfraction = inCURRC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+      
+          if (inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 1 && allcropfraction >= 0.0 && allcropfraction <= 1.0) {
+	      cropfraction = cropgrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              if (cropfraction > 0.0 && cropfraction <= 1.0) {
+	          tempextrapGrid[ctsmlin * MAXOUTPIX + ctsmpix] = fertgrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              }
+	      else {
+	          searchcropsum = 0.0;
+		  searchfertsum = 0.0;
+		  searchboxinside = 0;
+		  searchboxoutside = 2;
+		  while (searchcropsum == 0.0) {
+                      for (searchlin = ctsmlin - searchboxoutside; searchlin <= ctsmlin + searchboxoutside; searchlin++) {
+                          searchlinokay = 1;
+	                  if (searchlin < 0 || searchlin >= MAXOUTLIN) {
+                              searchlinokay = 0;
+                          }
+                          if (searchlin >= ctsmlin - searchboxinside && searchlin <= ctsmlin + searchboxinside) {
+                              searchlinokay = 0;
+                          }
+                          if (searchlinokay == 1) {
+                              for (searchpix = ctsmpix - searchboxoutside; searchpix <= ctsmpix + searchboxoutside; searchpix++) {
+                                  searchpixokay = 1;
+	                          if (searchpix < 0 || searchpix >= MAXOUTPIX) {
+                                      searchpixokay = 0;
+                                  }
+                                  if (searchpix >= ctsmpix - searchboxinside && searchpix <= ctsmpix + searchboxinside) {
+                                      searchpixokay = 0;
+                                  }
+                                  if (searchpixokay) {
+                                      searchcrop = cropgrid[searchlin * MAXOUTPIX + searchpix];
+                                      if (searchcrop > 0.0 && searchcrop <= 1.0) {
+                                          searchfert = fertgrid[searchlin * MAXOUTPIX + searchpix];
+                                          if (searchfert >= 0.0 && searchfert < 10000.0) {
+                                              searchcropsum += searchcrop;
+                                              searchfertsum += searchcrop * searchfert;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+		      searchboxinside = searchboxoutside;
+		      searchboxoutside = searchboxoutside * 2; 
+                      if (searchboxoutside > 16) {
+		          searchfertsum = fertgrid[ctsmlin * MAXOUTPIX + ctsmpix];
+		          searchcropsum = 1.0;
+                      }
+		  }
+                  tempextrapGrid[ctsmlin * MAXOUTPIX + ctsmpix] = searchfertsum / searchcropsum;		      
+              }
+          }
+      }
+  }
+  
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          fertgrid[ctsmlin * MAXOUTPIX + ctsmpix] = tempextrapGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+      }
+  }
+
+  return 0;
+
+}
+
+
+int extrapfertGrids() {
+
+  long ctsmlin, ctsmpix;
+  float allcropfraction;
+
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+
+          allcropfraction = inCURRC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+          allcropfraction += inCURRC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+          allcropfraction += inCURRC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+          allcropfraction += inCURRC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+          allcropfraction += inCURRC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  
+	  if (allcropfraction >= 0.0 && allcropfraction <= 1.0) {
+              inCURRCropGrid[ctsmlin * MAXOUTPIX + ctsmpix] = allcropfraction;
+	  }
+	  else {
+	      inCURRCropGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+	  }
+      }
+  }
+  
+  extrapindvidualfertGrid(inCURRC3ANNGrid,inFERTC3ANNGrid);
+  extrapindvidualfertGrid(inCURRC4ANNGrid,inFERTC4ANNGrid);
+  extrapindvidualfertGrid(inCURRC3PERGrid,inFERTC3PERGrid);
+  extrapindvidualfertGrid(inCURRC4PERGrid,inFERTC4PERGrid);
+  extrapindvidualfertGrid(inCURRC3NFXGrid,inFERTC3NFXGrid);
   
   return 0;
   
 }
+
+
 
 int generateLUHcollectionGrids() {
 
@@ -2641,6 +3145,10 @@ int generateLUHcollectionGrids() {
           inBASECROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inBASEC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inBASEC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inBASEC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inBASEC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inBASEC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  if (inBASECROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] > 10.0) {
 	      inBASECROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+	  }
+          inBASEURBANTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inBASEURBANGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  if (inBASEURBANTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] > 10.0) {
+	      inBASEURBANTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
 	  }
 	  if (inBASEPASTRGrid[ctsmlin * MAXOUTPIX + ctsmpix] > 10.0) {
 	      inBASEPASTRGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
@@ -2673,9 +3181,13 @@ int generateLUHcollectionGrids() {
 	  if (inCURRCROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] > 10.0) {
 	      inCURRCROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
 	  }
-          inPREVCROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inPREVC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+          inPREVCROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inCURRCROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVDELTAC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVDELTAC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVDELTAC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVDELTAC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] + inPREVDELTAC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	  if (inPREVCROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] > 10.0) {
 	      inPREVCROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+	  }
+          inCURRURBANTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = inCURRURBANGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	  if (inCURRURBANTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] > 10.0) {
+	      inCURRURBANTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
 	  }
           inCURRMISSINGGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 1.0 - inCURRFORESTTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] - inCURRNONFORESTTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] - inCURRPASTRGrid[ctsmlin * MAXOUTPIX + ctsmpix] - inCURRRANGEGrid[ctsmlin * MAXOUTPIX + ctsmpix] - inCURRCROPTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix];
           if (inCURRMISSINGGrid[ctsmlin * MAXOUTPIX + ctsmpix] < 0.0) {
@@ -2718,6 +3230,33 @@ int generateLUHcollectionGrids() {
             
   return 0;
   
+}
+
+
+int generatectsmURBANGrids() {
+
+  long ctsmlin, ctsmpix;
+  float pctglacierval, pctlakeval, pctwetlandval, pctavail;
+  float pcturbanval;
+
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 1.0) {
+              pctglacierval = inPCTGLACIERGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              pctlakeval = inPCTLAKEGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              pctwetlandval = inPCTWETLANDGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	      pctavail = 100.0 - pctglacierval + pctlakeval + pctwetlandval;
+	      pcturbanval = inCURRURBANTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] * 100.0;
+	      if (pcturbanval > pctavail) {
+	          pcturbanval = pctavail;
+              }
+	      outPCTURBANGrid[ctsmlin * MAXOUTPIX + ctsmpix] = pcturbanval;
+	  }
+      }
+  }
+
+  return 0;
+
 }
 
 
@@ -2810,13 +3349,13 @@ int generatectsmPFTGrids() {
 		      currentpctmissingpft = missingbaseval * inCURRENTPCTPFTGrid[pftid][ctsmlin * MAXOUTPIX + ctsmpix];
 		      unreppctotherpft = otherunrepfrac * (currentpctotherpft + deltapctotherpft);
                       newpctpft = currentpctforestpft + deltapctforestpft + currentpctpasturepft + deltapctpasturepft + currentpctotherpft + deltapctotherpft + currentpctmissingpft;
-		      if (pftid > 0 && newpctpft > 0.0) {   /* assume 0.15 rotation fraction after initial clearing for LUH2 shifting cultivation */
-		          unrepfrac = 0.15 * (unreppctforestpft + unreppctotherpft) / newpctpft; 
-			  if (unrepfrac < 0.000001) {
+		      if (pftid > 0 && newpctpft > 0.0) {
+		          unrepfrac = (unreppctforestpft + unreppctotherpft) / newpctpft; 
+			  if (unrepfrac < 0.001) {
 			      unrepfrac = 0.0;
 			  }
-			  if (unrepfrac > 0.15) { 
-			      unrepfrac = 0.15;
+			  if (unrepfrac > 0.25) { 
+			      unrepfrac = 0.25;
 			  }
 		      }
 		      else {
@@ -2890,12 +3429,10 @@ int generatectsmCFTGrids() {
                       if (newpctrainfedcft > 0.0) {
                           outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctrainfedcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunreprainfedval;
-                          outFERTNITROGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       if (newpctirrigcft > 0.0) {
                           outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctirrigcft;
                           outUNREPCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunrepirrigval;
-                          outFERTNITROGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       newpctrainfedcft = inCURRC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] * (1.0 - inIRRIGC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix]) * inC4ANNPCTCFTGrid[rawcftid][ctsmlin * MAXOUTPIX + ctsmpix];
                       newpctirrigcft = inCURRC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] * (inIRRIGC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix]) * inC4ANNPCTCFTGrid[rawcftid][ctsmlin * MAXOUTPIX + ctsmpix];
@@ -2904,12 +3441,10 @@ int generatectsmCFTGrids() {
                       if (newpctrainfedcft > 0.0) {
                           outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctrainfedcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunreprainfedval;
-                          outFERTNITROGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       if (newpctirrigcft > 0.0) {
                           outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctirrigcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunrepirrigval;
-                          outFERTNITROGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       newpctrainfedcft = inCURRC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] * (1.0 - inIRRIGC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix]) * inC3PERPCTCFTGrid[rawcftid][ctsmlin * MAXOUTPIX + ctsmpix];
                       newpctirrigcft = inCURRC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] * (inIRRIGC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix]) * inC3PERPCTCFTGrid[rawcftid][ctsmlin * MAXOUTPIX + ctsmpix];
@@ -2918,12 +3453,10 @@ int generatectsmCFTGrids() {
                       if (newpctrainfedcft > 0.0) {
                           outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctrainfedcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunreprainfedval;
-                          outFERTNITROGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       if (newpctirrigcft > 0.0) {
                           outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctirrigcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunrepirrigval;
-                          outFERTNITROGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       newpctrainfedcft = inCURRC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] * (1.0 - inIRRIGC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix]) * inC4PERPCTCFTGrid[rawcftid][ctsmlin * MAXOUTPIX + ctsmpix];
                       newpctirrigcft = inCURRC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] * (inIRRIGC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix]) * inC4PERPCTCFTGrid[rawcftid][ctsmlin * MAXOUTPIX + ctsmpix];
@@ -2932,12 +3465,10 @@ int generatectsmCFTGrids() {
                       if (newpctrainfedcft > 0.0) {
                           outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctrainfedcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunreprainfedval;
-                          outFERTNITROGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       if (newpctirrigcft > 0.0) {
                           outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctirrigcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunrepirrigval;
-                          outFERTNITROGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       newpctrainfedcft = inCURRC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix] * (1.0 - inIRRIGC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix]) * inC3NFXPCTCFTGrid[rawcftid][ctsmlin * MAXOUTPIX + ctsmpix];
                       newpctirrigcft = inCURRC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix] * (inIRRIGC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix]) * inC3NFXPCTCFTGrid[rawcftid][ctsmlin * MAXOUTPIX + ctsmpix];
@@ -2946,12 +3477,10 @@ int generatectsmCFTGrids() {
                       if (newpctrainfedcft > 0.0) {
                           outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctrainfedcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunreprainfedval;
-                          outFERTNITROGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                       if (newpctirrigcft > 0.0) {
                           outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newpctirrigcft;
                           outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = outUNREPCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] + newunrepirrigval;
-                          outFERTNITROGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = inFERTC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
                       }
                   }
                   newpctcroptotal = 0.0;
@@ -3098,6 +3627,7 @@ int generatectsmwoodharvestGrids() {
   
 }
 
+
 float calcmaxtotalbioh(float TreePFTArea, float TreePFTWeightedArea, float PFTArea) {
 
   float maxbioh, maxtotalbioh;
@@ -3113,174 +3643,6 @@ float calcmaxtotalbioh(float TreePFTArea, float TreePFTWeightedArea, float PFTAr
   
   return maxtotalbioh;
   
-}
-
-
-int scalewoodharvestregion(long startctsmlin, long endctsmlin, long startctsmpix, long endctsmpix) {
-
-  long ctsmlin, ctsmpix;  
-  int regionscalecount;
-  float TreePFTArea, TreePFTWeightedArea, PFTArea;
-  float origtotalbioh, currtotalbioh, maxtotalbioh, scalebioh;
-  float regionscalebioh, origsumtotalbioh, currsumtotalbioh;
-
-  regionscalecount = 0;
-  regionscalebioh = 10.0;
-  while (regionscalecount < 10 && regionscalebioh > 1.0001) {  
-      origsumtotalbioh = 0.0;
-      currsumtotalbioh = 0.0;
-      for (ctsmlin = startctsmlin; ctsmlin <= endctsmlin; ctsmlin++) {
-          for (ctsmpix = startctsmpix; ctsmpix <= endctsmpix; ctsmpix++) {
-              if (ctsmlin < MAXOUTLIN && ctsmpix < MAXOUTPIX) {
-                  if (inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 1.0) {
-                      origsumtotalbioh = origsumtotalbioh + outRBIOHORIGTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-                      currsumtotalbioh = currsumtotalbioh + outRBIOHCURRTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-                  }
-	      }
-          }
-      }  
-  
-      if (currsumtotalbioh > 0.0) {
-          regionscalebioh = origsumtotalbioh / currsumtotalbioh;
-      }
-      else {
-          regionscalebioh = 1.0;
-      }
-          
-      for (ctsmlin = startctsmlin; ctsmlin <= endctsmlin; ctsmlin++) {
-          for (ctsmpix = startctsmpix; ctsmpix <= endctsmpix; ctsmpix++) {
-	      if (ctsmlin < MAXOUTLIN && ctsmpix < MAXOUTPIX) {
-                  if (inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 1.0) {
-                      TreePFTArea = outRBIOHTreePFTAreaGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-                      TreePFTWeightedArea = outRBIOHTreePFTWeightedAreaGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-                      PFTArea = outRBIOHPFTAreaGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-                      maxtotalbioh = calcmaxtotalbioh(TreePFTArea,TreePFTWeightedArea,PFTArea);
-	              currtotalbioh = outRBIOHCURRTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-	              if (regionscalebioh * currtotalbioh > maxtotalbioh) {
-		          scalebioh = maxtotalbioh / currtotalbioh;
-		      }
-		      else {
-		          scalebioh = regionscalebioh;
-		      }
-                      outRBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outRBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-                      outRBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outRBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-                      outRBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outRBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-                      outRBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outRBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-                      outRBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outRBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	              outRBIOHCURRTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outRBIOHCURRTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-	          }
-              }
-          }  
-      }
-      regionscalecount = regionscalecount + 1;
-  }
-
-  return 0;
-  
-}
-
-
-int generatectsmbiohredistributedGrids() {
-
-  long ctsmlin, ctsmpix;  
-  int pftid;
-  float TreePFTArea, TreePFTWeightedArea, PFTArea;
-  float origtotalbioh, currtotalbioh, maxtotalbioh, scalebioh;
-  long startctsmlin, endctsmlin, startctsmpix, endctsmpix;
-  long numxregions, xregionsize, numyregions, yregionsize; 
-  long xregion, yregion;
-  float treeharvestweights[lasttreepft+1] = { 0.0,1.0,1.0,0.5,1.0,1.0,0.5,1.0,1.0 };
-
-  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
-      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
-          if (inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 1.0) {
-	      scalebioh = 1.165;
-	      outBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-
-	      outRBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outRBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outRBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outRBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outRBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      
-              TreePFTArea = 0.0;
-	      TreePFTWeightedArea = 0.0;
-              PFTArea = inAREAGrid[ctsmlin * MAXOUTPIX + ctsmpix] * inLANDFRACGrid[ctsmlin * MAXOUTPIX + ctsmpix] * outPCTNATVEGGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 100.0;              
-              for (pftid = firsttreepft; pftid <= lasttreepft; pftid++) {
-                  TreePFTArea = TreePFTArea + PFTArea * outPCTPFTGrid[pftid][ctsmlin * MAXOUTPIX + ctsmpix] / 100.0;
-                  TreePFTWeightedArea = treeharvestweights[pftid] * TreePFTWeightedArea + PFTArea * outPCTPFTGrid[pftid][ctsmlin * MAXOUTPIX + ctsmpix] / 100.0;
-              }
-	      origtotalbioh = TreePFTArea * (outBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] + outBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] + outBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] + outBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] + outBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix]);
-	      currtotalbioh = origtotalbioh;  
-	      maxtotalbioh = calcmaxtotalbioh(TreePFTArea,TreePFTWeightedArea,PFTArea);
-              if (origtotalbioh > maxtotalbioh) {
-	          scalebioh = maxtotalbioh / origtotalbioh;
-		  currtotalbioh = maxtotalbioh;
-	          outRBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	          outRBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	          outRBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	          outRBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	          outRBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix] = scalebioh * outBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-              }
-          }
-	  else {
-	      PFTArea = 0.0;
-	      TreePFTArea = 0.0;
-	      TreePFTWeightedArea = 0.0;
-	      origtotalbioh = 0.0;
-	      currtotalbioh = 0.0;
-	      outRBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHVH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-  	      outRBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHVH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outRBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHSH1Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outRBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outRBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix] = outBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix];
-	  }
-          outRBIOHTreePFTAreaGrid[ctsmlin * MAXOUTPIX + ctsmpix] = TreePFTArea;
-          outRBIOHTreePFTWeightedAreaGrid[ctsmlin * MAXOUTPIX + ctsmpix] = TreePFTWeightedArea;
-          outRBIOHPFTAreaGrid[ctsmlin * MAXOUTPIX + ctsmpix] = PFTArea;
-          outRBIOHORIGTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = origtotalbioh;
-          outRBIOHCURRTOTALGrid[ctsmlin * MAXOUTPIX + ctsmpix] = currtotalbioh;
-      }
-  }
-
-  numxregions = MAXOUTPIX * OUTPIXSIZE / 120.0;
-  if (numxregions < 1) {
-      numxregions = 1;
-  }
-  xregionsize = MAXOUTPIX / numxregions;
-  if (numxregions * xregionsize < MAXOUTPIX) {
-      numxregions = numxregions + 1;
-  }
-  
-  numyregions = MAXOUTLIN * OUTPIXSIZE / 60.0;
-  if (numyregions < 1) {
-      numyregions = 1;
-  }
-  yregionsize = MAXOUTLIN / numyregions;
-  if (numyregions * yregionsize < MAXOUTLIN) {
-      numyregions = numyregions + 1;
-  }
-  
-  for (yregion = 0; yregion < numyregions; yregion++) {
-      startctsmlin = 0 + yregion * yregionsize;
-      endctsmlin = startctsmlin + yregionsize - 1;
-      for (xregion = 0; xregion < numxregions; xregion++) {
-          startctsmpix = 0 + xregion * xregionsize;
-	  endctsmpix = startctsmpix + xregionsize - 1;
-
-          scalewoodharvestregion(startctsmlin,endctsmlin,startctsmpix,endctsmpix);
-	  
-      }
-  }
-	  
-  scalewoodharvestregion(0,MAXOUTLIN-1,0,MAXOUTPIX-1);
-
-  return 0;
-
 }
 
 
@@ -3303,11 +3665,68 @@ int generatectsmbiohdirectGrids() {
 }
 
 
-double truncCTSMValues(float CTSMValueIn, float CTSMMaxValue, float CTSMThreshold) {
+int generatectsmfertGrids() {
+
+  long ctsmlin, ctsmpix;
+  int cftid, rawcftid, rainfedcftid, irrigcftid;
+  float pctcropval, pctrainfedcft, pctirrigcft;
+  float fertamount;
+
+  for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
+      for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
+          if (inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 1) {
+              for (rawcftid = 0; rawcftid < MAXCFTRAW; rawcftid++) {
+                  rainfedcftid = 2 * (rawcftid);
+                  irrigcftid = 2 * (rawcftid) + 1;
+	          fertamount = 0.0;
+	          if (strcmp(CFTRAWluhtype[rawcftid],"C3ANN") == 0) {
+		      fertamount = inFERTC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
+		  }
+	          if (strcmp(CFTRAWluhtype[rawcftid],"C4ANN") == 0) {
+		      fertamount = inFERTC4ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
+		  }
+	          if (strcmp(CFTRAWluhtype[rawcftid],"C3PER") == 0) {
+		      fertamount = inFERTC3PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
+		  }
+	          if (strcmp(CFTRAWluhtype[rawcftid],"C4PER") == 0) {
+		      fertamount = inFERTC4PERGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
+		  }
+	          if (strcmp(CFTRAWluhtype[rawcftid],"C3NFX") == 0) {
+		      fertamount = inFERTC3NFXGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
+		  }
+	          if (strcmp(CFTRAWluhtype[rawcftid],"EXCLD") == 0) {
+		      fertamount = inFERTC3ANNGrid[ctsmlin * MAXOUTPIX + ctsmpix] / 10.0;
+		  }
+		  pctrainfedcft = outPCTCFTGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix];
+                  if (pctrainfedcft >= 0.0) {
+                      outFERTNITROGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = fertamount;
+                  }
+		  else {
+                      outFERTNITROGrid[rainfedcftid][ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+                  }
+		  pctirrigcft = outPCTCFTGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix];
+                  if (pctirrigcft >= 0.0) {
+                      outFERTNITROGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = fertamount;
+                  }
+		  else {
+                      outFERTNITROGrid[irrigcftid][ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+                  }
+              }
+          }
+      }
+  }
+
+  return 0;
+  
+}
+
+
+
+double truncCTSMValues(double CTSMValueIn, double CTSMMaxValue, double CTSMThreshold) {
 
   double CTSMValueOut = 0.0;
   
-  if (CTSMValueIn >= CTSMPCTThreshold) {
+  if (CTSMValueIn >= CTSMThreshold) {
       CTSMValueOut = ((double) ((int) (CTSMValueIn / CTSMThreshold))) * CTSMThreshold;
   }
   
@@ -3324,7 +3743,7 @@ int generatedblGrids() {
 
   long ctsmlin, ctsmpix;
   int pftid, cftid;
-  double AllPCTVEG, OtherPCT, AllPFTs, AllCFTs, tempdblPCT;
+  double LandFRAC, AvailPCT, OtherPCT, AllPFTs, AllCFTs, CropPCT, NatVegPCT, tempdblPCT;
   double LargestPCTPFT, RescaledPCTPFT, LargestPCTCFT, RescaledPCTCFT;
   int LargestPFT, LargestCFT;
   
@@ -3332,15 +3751,25 @@ int generatedblGrids() {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
           outAREAdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(inAREAGrid[ctsmlin * MAXOUTPIX + ctsmpix],1000000.0,0.001);
           if (inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 1.0) {
-              outLANDFRACdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(inLANDFRACGrid[ctsmlin * MAXOUTPIX + ctsmpix],1.0,0.0001);
+              outLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 1.0;
+              LandFRAC = truncCTSMValues(inLANDFRACGrid[ctsmlin * MAXOUTPIX + ctsmpix],1.0,0.0001);
+              outLANDFRACdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = LandFRAC;
               outPCTGLACIERdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(inPCTGLACIERGrid[ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
               outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(inPCTLAKEGrid[ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
               outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(inPCTWETLANDGrid[ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
-              outPCTURBANdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(inPCTURBANGrid[ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
-              OtherPCT = outPCTGLACIERdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + outPCTURBANdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-              outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(outPCTCROPGrid[ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
-              outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 100.0 - OtherPCT - outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];	      
-              AllPCTVEG = outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              outPCTURBANdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(outPCTURBANGrid[ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
+	      OtherPCT = outPCTGLACIERdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + outPCTURBANdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              AvailPCT = truncCTSMValues(100.0 - OtherPCT,100.0,0.01);
+	      if (AvailPCT < 0.0) {
+	          AvailPCT = 0.0;
+              }
+              CropPCT = truncCTSMValues(outPCTCROPGrid[ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
+	      if (CropPCT > AvailPCT) {
+	          CropPCT = AvailPCT;
+	      }
+	      NatVegPCT = AvailPCT - CropPCT;
+              outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = CropPCT;
+              outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = NatVegPCT;
               AllPFTs = 0.0;
               for (pftid = 0; pftid < MAXPFT; pftid++) {
                   AllPFTs += truncCTSMValues(outPCTPFTGrid[pftid][ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
@@ -3349,9 +3778,7 @@ int generatedblGrids() {
               for (cftid = 0; cftid < MAXCFT; cftid++) {
                   AllCFTs += truncCTSMValues(outPCTCFTGrid[cftid][ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
               }
-              if (AllPCTVEG == 0.0) {
-                  outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 100.0;
-                  outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+              if (AvailPCT == 0.0) {
                   outPCTPFTdblGrid[0][ctsmlin * MAXOUTPIX + ctsmpix] = 100.0;
                   for (pftid = 1; pftid < MAXPFT; pftid++) {
                       outPCTPFTdblGrid[pftid][ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
@@ -3376,8 +3803,6 @@ int generatedblGrids() {
                   outRBIOHSH3dblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
               }
               else {
-                  outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(outPCTCROPGrid[ctsmlin * MAXOUTPIX + ctsmpix],100.0,0.01);
-                  outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 100.0 - outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
                   if (AllPFTs == 0.0) {
                       outPCTPFTdblGrid[0][ctsmlin * MAXOUTPIX + ctsmpix] = 100.0;
                       for (pftid = 1; pftid < MAXPFT; pftid++) {
@@ -3437,9 +3862,19 @@ int generatedblGrids() {
                   outRBIOHSH2dblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(outRBIOHSH2Grid[ctsmlin * MAXOUTPIX + ctsmpix],100000.0,0.01);
                   outRBIOHSH3dblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = truncCTSMValues(outRBIOHSH3Grid[ctsmlin * MAXOUTPIX + ctsmpix],100000.0,0.01);
               }        
-          } 
-          else {
+              outPCTGLACIERdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = LandFRAC * outPCTGLACIERdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = LandFRAC * outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = LandFRAC * outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              outPCTURBANdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = LandFRAC * outPCTURBANdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = LandFRAC * outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+              outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = LandFRAC * outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+          }
+	  else { 
+              outLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
               outLANDFRACdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
+          }
+          if (outLANDFRACdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 0.0) {
+              outLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
               outPCTGLACIERdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
               outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
               outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
@@ -3483,8 +3918,8 @@ int swapoceanGrids() {
   
   for (ctsmlin = 0; ctsmlin < MAXOUTLIN; ctsmlin++) {
       for (ctsmpix = 0; ctsmpix < MAXOUTPIX; ctsmpix++) {
-          if (inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 0.0) {
-              inLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 1.0;
+          if (outLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] == 0.0) {
+              outLANDMASKGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 1.0;
 	      outLANDFRACdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 1.0;
 	      outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 100.0;
 	      outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 0.0;
@@ -3504,8 +3939,8 @@ int swapoceanGrids() {
 	      scalelandunits = outLANDFRACdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	      outLANDFRACdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = 1.0;
 	      outPCTGLACIERdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalelandunits * outPCTGLACIERdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
-	      outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalelandunits * outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + (1.0 - scalelandunits) * 100.0;
-	      outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalelandunits * outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	      outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalelandunits * outPCTLAKEdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
+	      outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalelandunits * outPCTWETLANDdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] + (1.0 - scalelandunits) * 100.0;
 	      outPCTURBANdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalelandunits * outPCTURBANdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	      outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalelandunits * outPCTCROPdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
 	      outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix] = scalelandunits * outPCTNATVEGdblGrid[ctsmlin * MAXOUTPIX + ctsmpix];
@@ -3526,7 +3961,7 @@ int writegrids(int currentyear) {
   char pftidstr[256];
   char cftidstr[256];
 
-  sprintf(outncfilename,"%s/%s_%d.nc",outputdir,outputseries,currentyear);
+  sprintf(outncfilename,"%s/%s_%d.%s.nc",outputdir,outputseries,currentyear,timestamp);
   createncoutputfile(outncfilename);
   openncoutputfile(outncfilename);
   
@@ -3540,7 +3975,7 @@ int writegrids(int currentyear) {
   writenc2dfield("LATIXY",inLATIXY);
   writenc1dfield("LON",inLON);
   writenc2dfield("LONGXY",inLONGXY);
-  writenc2dfield("LANDMASK",inLANDMASKGrid);
+  writenc2dfield("LANDMASK",outLANDMASKGrid);
   writenc2ddblfield("LANDFRAC",outLANDFRACdblGrid);
   writenc2ddblfield("AREA",outAREAdblGrid);
   writenc2ddblfield("PCT_GLACIER",outPCTGLACIERdblGrid);
@@ -3617,7 +4052,7 @@ main(long narg, char **argv) {
       readLUHbasestateGrids(refyear);
   
       readLUHcurrstateGrids(yearnumber);
-      readLUHprevstateGrids(yearnumber-1);
+      readLUHprevdeltastateGrids(yearnumber-1);
   
       readLUHwoodharvestGrids(yearnumber-1);
   
@@ -3625,18 +4060,15 @@ main(long narg, char **argv) {
       readUNREPSECDNGrids(yearnumber-1);
 
       readLUHcropmanagementGrids(yearnumber);
+      extrapfertGrids();
 
       generateLUHcollectionGrids();
+      generatectsmURBANGrids();
       generatectsmPFTGrids();
       generatectsmCFTGrids();
       generatectsmwoodharvestGrids();
-      
-      if (redistributeWH == 1) {
-          generatectsmbiohredistributedGrids();
-      }
-      else {
-          generatectsmbiohdirectGrids();
-      }
+      generatectsmbiohdirectGrids();
+      generatectsmfertGrids();
             
       generatedblGrids();
       
